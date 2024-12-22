@@ -133,6 +133,71 @@ class Piano {
       this.setChord()
   }
 
+  mouseReleased() {
+    // Ajoutez la logique de mouseReleased ici si nécessaire
+  }
+
+  mouseDragged() {
+    // Ajoutez la logique de mouseDragged ici si nécessaire
+  }
+
+  mouseWheel(event) {  
+    let direction
+    if (event.delta > 0) {
+      direction = +1;
+    } else {
+      direction = -1;
+    }
+    // Ajoutez la logique de mouseWheel ici si nécessaire
+  }
+
+  toggleKeyCount(k){
+    let keyCountindex, keyCount
+    keyCountindex = keyCounts.indexOf(k)
+    keyCountindex++
+    keyCountindex = (keyCountindex) % keyCounts.length
+    keyCount = keyCounts[keyCountindex]
+    console.log(k + '>' + keyCount)
+    return keyCount
+  }
+
+  keyPressed(keyCode) {
+    console.log(keyCode)
+    // c couleur /transparent
+    if (keyCode == 67) {
+      this.updateColor()
+    } 
+    //z mode zoom
+    if (keyCode == 90) {
+      this.updateKeyCount(this.toggleKeyCount(this.keyCount))
+    } 
+    //haut octave +
+    if (keyCode == 38) {
+      this.updateOctave(1)
+    }       
+    //haut octave -
+    if (keyCode == 40) {
+      this.updateOctave(-1)
+    } 
+
+    // Changer le nombre de touches du piano
+    if (keyCode == 50) { // touche '2'
+      this.updateKeyCount(25);
+    }
+    if (keyCode == 52) { // touche '4'
+      this.updateKeyCount(49);
+    }
+    if (keyCode == 54) { // touche '6'
+      this.updateKeyCount(61);
+    }
+    if (keyCode == 55) { // touche '7'
+      this.updateKeyCount(76);
+    }
+    if (keyCode == 56) { // touche '8'
+      this.updateKeyCount(88);
+    }
+  }
+
   setChord(){
     if (this.selectedNotes.length>2){
       this.chordName = Tonal.Chord.detect(this.selectedNotes.toSorted()

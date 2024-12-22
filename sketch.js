@@ -33,98 +33,45 @@ function draw() {
 }
 
 function mouseMoved(){
-for (const piano of pianos)
+  for (const piano of pianos)
     piano.mouseMoved()    
 }
 
 function mousePressed(){
- for (const piano of pianos)
-   piano.mousePressed()
-
+  for (const piano of pianos)
+    piano.mousePressed()
 }
 
 function mouseReleased(){
-  
+  for (const piano of pianos)
+    piano.mouseReleased()
 }
 
 function mouseDragged(){
-
+  for (const piano of pianos)
+    piano.mouseDragged()
 }
 
 function mouseWheel(event) {  
-  let direction
-  if (event.delta > 0) {
-    direction = +1;
-  } else {
-    direction = -1;
-  }
-
-}
-  function windowResized() {
-    wW =windowWidth
-    wH = windowHeight
-    resizeCanvas(wW, wH);
-
-    for (const piano of pianos)
-      piano.updateSize()
+  for (const piano of pianos)
+    piano.mouseWheel(event)
 }
 
 function keyPressed(){
-  console.log(keyCode)
-      // c couleur /transparent
-      if (keyCode == 67) {
-        for (const piano of pianos)
-          piano.updateColor()
-      } 
-      //z mode zoom
-      if (keyCode == 90) {
-        for (const piano of pianos)
-          piano.updateKeyCount(toggleKeyCount(piano.keyCount))
-      } 
-      //haut octave +
-      if (keyCode == 38) {
-        for (const piano of pianos)
-          piano.updateOctave(1)
-      }       
-      //haut octave -
-      if (keyCode == 40) {
-        for (const piano of pianos)
-          piano.updateOctave(-1)
-      } 
-
-        // Changer le nombre de touches du piano
-  if (keyCode == 50) { // touche '2'
-    for (const piano of pianos)
-      piano.updateKeyCount(25);
-  }
-  if (keyCode == 52) { // touche '4'
-    for (const piano of pianos)
-      piano.updateKeyCount(49);
-  }
-  if (keyCode == 54) { // touche '6'
-    for (const piano of pianos)
-      piano.updateKeyCount(61);
-  }
-  if (keyCode == 55) { // touche '7'
-    for (const piano of pianos)
-      piano.updateKeyCount(76);
-  }
-  if (keyCode == 56) { // touche '8'
-    for (const piano of pianos)
-      piano.updateKeyCount(88);
-  }
+  for (const piano of pianos)
+    piano.keyPressed(keyCode)
 }
 
-function toggleKeyCount(k){
-    let keyCountindex,keyCount
-    keyCountindex=keyCounts.indexOf(k)
-    keyCountindex++
-    keyCountindex=(keyCountindex) %keyCounts.length
-    keyCount=keyCounts[keyCountindex]
-    console.log(k +'>'+keyCount)
-    return keyCount
+function windowResized() {
+  wW =windowWidth
+  wH = windowHeight
+  resizeCanvas(wW, wH);
+
+  for (const piano of pianos)
+    piano.updateSize()
 }
 
+// Supprimer la fonction toggleKeyCount de sketch.js car elle est maintenant dans la classe Piano
 
 function notePressed(midiNote) {
   liveNotes.push(midiNote)
