@@ -1,28 +1,30 @@
 class Key {
-  constructor(index, startNote,keyType, originX, originY , size, isPlayed, isScale, label){
-    this.index = index
-    this.startNote = startNote
-    this.keyType = keyType
-    this.setNote()
-    this.size = size
-    this.w = this.size
-    this.h = this.size*6
-    this.x = originX
-    this.y = windowHeight-this.h-this.x
-    this.isHover = false
-    this.isPlayed = isPlayed
-    this.isScale = isScale  
-    this.label = label
-    this.thickness = 1
-    this.isWhiteKey = true
-    
-    this.frameColor = 'green'
-    this.scaleColor = 'white'
-    this.scaleColorWhite = 'rgb(255,255,255)'
-    this.scaleColorBlack = '#000000(0,0,0)'
-    this.playedColor = '#00B0FF'
-    this.colorModes = ['BW','color','fullcolor','invisible']
-    this.colorMode = 'BW'
+  constructor(index, startNote, keyType, originX, originY, size, isPlayed, isScale, label) {
+    this.index = index;
+    this.startNote = startNote;
+    this.keyType = keyType;
+    this.setNote();
+    this.size = size;
+    this.w = this.size;
+    this.h = this.size * 6;
+    this.x = originX;
+    this.y = windowHeight - this.h - this.x;
+    this.isHover = false;
+    this.isPlayed = isPlayed;
+    this.isSelected = false; // Nouvelle propriété pour l'état de sélection
+    this.isScale = isScale;
+    this.label = label;
+    this.thickness = 1;
+    this.isWhiteKey = true;
+
+    this.frameColor = 'green';
+    this.scaleColor = 'white';
+    this.scaleColorWhite = 'rgb(255,255,255)';
+    this.scaleColorBlack = '#000000(0,0,0)';
+    this.playedColor = '#00B0FF';
+    this.selectedColor = '#FFD700'; // Couleur pour l'état sélectionné
+    this.colorModes = ['BW', 'color', 'fullcolor', 'invisible'];
+    this.colorMode = 'BW';
   }
 
   setNote(){
@@ -70,6 +72,10 @@ class Key {
      stroke('white')
      this.color =this.playedColor
    } 
+   if (this.isSelected) {
+     stroke('black')
+     this.color = this.selectedColor
+   }
   }
 
   getNoteChroma(note){
@@ -90,15 +96,21 @@ class Key {
     indexColorMode =(indexColorMode +1)%this.colorModes.length
     this.colorMode = this.colorModes[indexColorMode]
   }
-  updateLiveNotes(liveNotes){
-    this.liveNotes = liveNotes
-    if (liveNotes.includes(this.midiNote))
-      this.isPlayed =true
-    else
-      this.isPlayed =false
+  updateLiveNotes(liveNotes) {
+    this.liveNotes = liveNotes;
+    if (liveNotes.includes(this.midiNote)) {
+      if (!this.isPlayed) {
+        this.isPlayed = true;
+      }
+    } else {
+      if (this.isPlayed) {
+        this.isPlayed = false;
+      }
+    }
   }
 
   display(){    
+    push();
     noFill()
     colorMode(HSL,360,100,100) 
     strokeWeight(1)
@@ -121,7 +133,12 @@ class Key {
       this.displayNote()
     }
 
+    if (!this.isWhiteKey) {
+      this.displayReflection(0.05); // Exemple d'épaisseur de liseré
+    }
+    pop();
   } 
+
   getX(){
     this.delta = this.getDelta(this.noteChroma)
     let delta2 = this.getDelta(this.startNoteChroma) // pour recaler non C
@@ -151,14 +168,17 @@ class Key {
   }
     
     displayKey(shape, x, y, w, h) {
+      push();
       if (shape === 'b') {
         this.blackKeyShape(x, y, w, h);
       } else {
         this.generalKeyShape(shape, x, y, w, h);
       }
+      pop();
     }
   
     generalKeyShape(shape, x, y, w, h) {
+      push();
       beginShape();
       switch (shape) {
         case 'I':
@@ -195,22 +215,36 @@ class Key {
           break;
       }
       endShape(CLOSE);
+      pop();
     }
   
     blackKeyShape(x, y, w, h) {
+      push();
       rect(x + this.thickness, y, w / 1.5 - this.thickness * 2, h * 0.6 - this.thickness);
+      pop();
     }
   
+  displayReflection(thickness) {
+    push();
+    noStroke();
+    fill(255, 255, 255, 50); // couleur blanche semi-transparente
+    rect(this.keyX + this.w * thickness * 3, this.y, this.w * 0.05, this.h * 0.5);
+    rect(this.keyX + this.w * thickness * 3, this.y + this.h * 0.5, this.w * 0.4, this.h * 0.01);
+    pop();
+  }
   
   displayLabel(){
+    push();
     noStroke()
     textFont('Arial')
     textSize(this.w/2)
     textAlign(LEFT,TOP)
     text(this.midiNoteLabel,this.labelX, this.y+this.h-this.w/2)
+    pop();
   }
 
   displayNote(){
+    push();
     noStroke()
 
     fill('white')
@@ -218,6 +252,7 @@ class Key {
     textSize(this.w)
     textAlign(LEFT,TOP)
     textKeyNote(this.noteLabel,this.labelX, this.y-this.w)
+    pop();
   } 
   
 
@@ -233,8 +268,10 @@ class Key {
   }
   
   blackKeyShape(x,y,w,h){
+    push();
     rect(x+this.thickness, y,
          w/1.5-this.thickness*2 , h*0.6 -this.thickness);
+    pop();
   }
   
   DShape(x,y,w,h){
@@ -337,11 +374,16 @@ class Key {
     }
   }
   
-  mousePressed(){
-    if (this.isHover)
-      this.toggleLock()
+  mousePressed() {
+    if (this.isHover) {
+      this.toggleSelect();
+    }
   }
-  
+
+  toggleSelect(){
+    this.isSelected = !this.isSelected;
+  }
+
   toggleLock(){
     this.isLocked = !this.isLocked
 

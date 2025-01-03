@@ -17,6 +17,8 @@ function setup() {
   //pianos.push(new Piano(10, 250, 10, 61 )) 
   //pianos.push(new Piano(10, 250, 10, 76 )) 
   //pianos.push(new Piano(10, 350, 10, 88 ))
+  for (const piano of pianos)
+    initializeMidi(piano)
 }
 
 function draw() {
