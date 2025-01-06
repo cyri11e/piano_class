@@ -222,8 +222,8 @@ class Piano {
     for (let key of this.keys) {
       if (key.midiNote === midiNote) {
         key.isPlayed = true;
-          // Marquer la note comme jouée
-          this.createRuban(key)    
+        // Marquer la note comme jouée
+        this.createRuban(key);
       }
     }
   }
@@ -231,10 +231,9 @@ class Piano {
   noteOff(midiNote) {
     for (let key of this.keys) {
       if (key.midiNote === midiNote) {
-        key.active = false;
+        key.isPlayed = false;
         // Marquer la note comme relâchée
-          this.stopRuban(key.midiNote);
-
+        this.stopRuban(key.midiNote);
       }
     }
   }

@@ -2,7 +2,7 @@ let wH
 let wW 
 let pianos = []
 let keyCounts = [25,49,61,76,88]
-let liveNotes =[]
+//let liveNotes =[]
 
 
 function setup() {
@@ -66,17 +66,4 @@ function windowResized() {
 }
 
 
-function notePressed(midiNote) {
-  liveNotes.push(midiNote)
-  for (const piano of pianos)
-    piano.updateLiveNotes(liveNotes)
-}
-
-function noteReleased(midiNote) { 
-  // retirer la note relachee
-  if (liveNotes.includes(midiNote))
-      liveNotes.splice(liveNotes.indexOf(midiNote), 1)  
-  for (const piano of pianos)
-    piano.updateLiveNotes(liveNotes)   
-}
 

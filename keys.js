@@ -9,7 +9,6 @@ class Key {
     this.h = this.size * 6;
     this.x = originX;
     this.y = windowHeight - this.h - this.x;
-    this.isHover = false;
     this.isPlayed = isPlayed;
     this.isSelected = false; // Nouvelle propriété pour l'état de sélection
     this.isScale = isScale;
@@ -21,7 +20,7 @@ class Key {
     this.scaleColor = 'white';
     this.scaleColorWhite = 'rgb(255,255,255)';
     this.scaleColorBlack = '#000000(0,0,0)';
-    this.playedColor = '#00B0FF';
+    this.playedColor = '#00B0FF'; // Couleur pour l'état joué
     this.selectedColor = '#FFD700'; // Couleur pour l'état sélectionné
     this.colorModes = ['BW', 'color', 'fullcolor', 'invisible'];
     this.colorMode = 'BW';
@@ -47,8 +46,8 @@ class Key {
         this.playedColor = 'cyan'
       }
       else {
-        this.scaleColor = color(30*(chroma%12),20,30)  
-        this.playedColor = color(30*(chroma%12),100,70)  
+        this.scaleColor = color((chroma%12) , 8, 6)  
+        this.playedColor = color((chroma%12) , 8, 6)  
       }
    } else { 
    // touches blanches
@@ -60,8 +59,8 @@ class Key {
        this.playedColor = 'cyan'
      }
      else {
-       this.scaleColor = color(30*(chroma%12),20,60)
-       this.playedColor = color(30*(chroma%12),100,60)
+       this.scaleColor = color((chroma%12) , 8, 10)
+       this.playedColor = color((chroma%12) , 8, 10)
      }     
    } 
    if (this.isScale) {
@@ -96,6 +95,7 @@ class Key {
     indexColorMode =(indexColorMode +1)%this.colorModes.length
     this.colorMode = this.colorModes[indexColorMode]
   }
+
   updateLiveNotes(liveNotes) {
     this.liveNotes = liveNotes;
     if (liveNotes.includes(this.midiNote)) {
@@ -112,7 +112,7 @@ class Key {
   display(){    
     push();
     noFill()
-    colorMode(HSL,360,100,100) 
+    colorMode(HSB, 12, 12, 12) 
     strokeWeight(1)
     
     // recuparation de la couleur
@@ -122,19 +122,25 @@ class Key {
     // forme
     let shape = this.getShape(this.chromaNote)  
     
-    fill(this.color)
+    if (this.isHovered()) {
+      fill('red');
+    }
+    else
+      fill(this.color)
     this.displayKey(shape, this.keyX, this.y, this.w, this.h)
     
+    // affichage des labels C 
     if (this.midiNoteLabel.includes('C')){    
       fill('silver')
       this.displayLabel()
     }
+    
     if (this.isPlayed){    
       this.displayNote()
     }
 
     if (!this.isWhiteKey) {
-      this.displayReflection(0.05); // Exemple d'épaisseur de liseré
+     // this.displayReflection(0.05); // Exemple d'épaisseur de liseré
     }
     pop();
   } 
@@ -358,20 +364,11 @@ class Key {
   }  
   
   mouseMoved(){
-    
-    if ( this.isWhiteKey) {
-      if ((mouseX > this.keyX)&&(mouseX < this.keyX+this.w)&&
-          (mouseY > this.y+this.h*0.6)&&(mouseY < this.y+this.h)) 
-      this.isHover  =true
-      else 
-      this.isHover  =false      
-    } else {
-        if ((mouseX > this.keyX)&&(mouseX < this.keyX+this.w)&&
-          (mouseY > this.y)&&(mouseY < this.y+this.h*0.6)) 
-      this.isHover  =true
-      else 
-      this.isHover  =false       
+    if (this.isHovered()) {
+
+    //  console.log(`Key ${this.index} hovered: ${this.isHovered()}`);
     }
+
   }
   
   mousePressed() {
@@ -389,7 +386,21 @@ class Key {
 
     this.isPlayed =this.isLocked
   }
-}function textKeyNote(note,x,y){ 
+
+  isHovered() {
+    let hovered;
+    if (this.isWhiteKey) {
+      hovered = (mouseX > this.keyX && mouseX < this.keyX + this.w &&
+                 mouseY > this.y + this.h * 0.6 && mouseY < this.y + this.h);
+    } else {
+      hovered = (mouseX > this.keyX && mouseX < this.keyX + this.w &&
+                 mouseY > this.y && mouseY < this.y + this.h * 0.6);
+    }
+    return hovered;
+  }
+}
+
+function textKeyNote(note,x,y){ 
   let size = textSize()
   push()
 
