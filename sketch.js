@@ -20,7 +20,7 @@ function setup() {
 }
 
 function draw() {
-  background('lime');
+  background(100);
  
   // clavier
   for (const piano of pianos)

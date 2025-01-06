@@ -27,26 +27,33 @@ class Ruban {
   display() {
     if (this.endY > 0) {
       push();
+      colorMode(HSB, 12, 12, 12); // Utiliser le mode de couleur HSB
       noFill();
-      stroke(255); // Couleur blanche
-      strokeWeight(this.width / 20); // Augmenter l'épaisseur du trait
+      stroke(this.midiNote %12, 12 ,12); // Couleur blanche
+      strokeWeight(this.width / 10); // Augmenter l'épaisseur du trait
+
+      // Ajouter un effet de glow
+      drawingContext.shadowBlur = 30;
+      drawingContext.shadowColor = 'rgba(255, 255, 255, 0.8)';
+
       rect(this.startX, this.startY, this.width, this.endY - this.startY, 10); // Coins arrondis
 
       // Afficher le label si le ruban est assez long
-      if (this.endY - this.startY > 40) {
-        fill(255);
+      if ((this.endY - this.startY > 40)&(this.isPlaying)) {
+        fill(this.midiNote %12, 12 ,12); 
         noStroke();
         textSize(this.width); // Augmenter la taille du texte
         textAlign(CENTER, TOP);
         this.displayNoteLabel(this.label, this.startX + this.width / 2, this.startY + this.width / 10);
       }
-      if (this.endY - this.startY > 80 && !this.isPlaying) {
-        fill(255);
+      if (!this.isPlaying) {
+        fill(this.midiNote %12, 12 ,12);
         noStroke();
         textSize(this.width); // Augmenter la taille du texte
         textAlign(CENTER, TOP);
         this.displayNoteLabel(this.label, this.startX + this.width / 2, this.endY - this.width );
       }
+
       pop();
     }
   }

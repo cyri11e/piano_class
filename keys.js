@@ -64,7 +64,10 @@ class Key {
      }     
    } 
    if (this.isScale) {
-     stroke('black')
+      if (this.colorMode=='invisible')
+        stroke('white')   
+      else
+        stroke('black') // Stroke noir pour les touches de l'échelle
      this.color= this.scaleColor      
    } 
    if (this.isPlayed){
@@ -126,7 +129,11 @@ class Key {
       fill('red');
     }
     else
-      fill(this.color)
+      if (this.colorMode == 'invisible') 
+        noFill()
+      else  
+        fill(this.color)
+      
     this.displayKey(shape, this.keyX, this.y, this.w, this.h)
     
     // affichage des labels C 
