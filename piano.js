@@ -3,11 +3,13 @@ class Piano {
     this.x = x;
     this.y = y;
     this.updateKeyCount(keyCount);
-    this.chord = [];
-    this.chordName = '';
-    this.ChordLocked = false;
     this.rubans = [];
   }
+
+  // piano n 'est pas un objet d'affichage 
+  // mais un conteneur de touches et de rubans
+  // il transmet les événements de souris et de clavier
+  // aux objets graphiques ket et ruban
 
   setKeyCount(count) {
     this.keyCount = count;
@@ -51,54 +53,25 @@ class Piano {
       }
     }
     textAlign(CENTER, CENTER);
-    this.displayChord();
-    this.displayFromFifthChord();
-    this.displayToFifthChord();
     pop();
   }
 
-  displayChord() {
-    push();
-    if (!this.chordName) return;
-    let size = ((20 - this.chordName.length) / 20) * this.s * 6 / 2;
-    textSize(size);
-    fill('white');
-    text(this.chordName, windowWidth / 2, windowHeight / 2 - this.s * 4);
-    pop();
-  }
-
-  displayToFifthChord() {
-    push();
-    if (!this.chordName) return;
-    let size = ((20 - this.chordName.length) / 20) * this.s * 6 / 4;
-    textSize(size);
-    fill('white');
-    text(Tonal.Chord.transpose(this.chordName, '-5P'), 3 * windowWidth / 4, windowHeight / 2 - this.s * 6);
-    pop();
-  }
-
-  displayFromFifthChord() {
-    push();
-    if (!this.chordName) return;
-    let size = ((20 - this.chordName.length) / 20) * this.s * 6 / 4;
-    textSize(size);
-    fill('white');
-    text(this.getSecondaryDominant(this.chordName), windowWidth / 4, windowHeight / 2 - this.s * 6);
-    pop();
-  }
 
   updateSize() {
     for (let key of this.keys) {
       key.updateSize((windowWidth - 2 * this.x) / this.whiteCount(this.keyCount));
     }
   }
+  updateColor() {
+    for (let key of this.keys) {
+      key.updateColor();
+    }
+  }
 
-  getSecondaryDominant(chordName) {
-    let secondaryDominant, root, chord;
-    chord = Tonal.Chord.get(chordName);
-    root = chord.tonic;
-    secondaryDominant = Tonal.Chord.transpose(Tonal.Chord.getChord('7', root).symbol, '5P');
-    return secondaryDominant;
+  updateOctave(octave) {
+    for (let key of this.keys) {
+      key.updateOctave(octave);
+    }
   }
 
   updateLiveNotes(liveNotes) {
@@ -106,17 +79,6 @@ class Piano {
     for (let key of this.keys) {
       key.updateLiveNotes(liveNotes);
       this.selectedNotes.push(key.midiNoteLabel);
-    }
-    if (this.selectedNotes.length > 2) {
-      this.chordName = Tonal.Chord.detect(
-        liveNotes
-          .toSorted()
-          .map((n) => Tonal.Midi.midiToNoteName(n, { pitchClass: true, sharps: false })),
-        { assumePerfectFifth: true }
-      )
-        .filter((e) => !e.includes('#5'))[0];
-    } else {
-      this.chordName = '';
     }
   }
 
@@ -137,19 +99,20 @@ class Piano {
     }
   }
 
-  updateColor() {
-    for (let key of this.keys) {
-      key.updateColor();
-    }
+  
+  toggleKeyCount(k) {
+    let keyCountindex, keyCount;
+    keyCountindex = keyCounts.indexOf(k);
+    keyCountindex++;
+    keyCountindex = keyCountindex % keyCounts.length;
+    keyCount = keyCounts[keyCountindex];
+    console.log(k + '>' + keyCount);
+    return keyCount;
   }
 
-  updateOctave(octave) {
-    for (let key of this.keys) {
-      key.updateOctave(octave);
-    }
-  }
 
-  // interactions
+  // interactions SOURIS
+
   mouseMoved() {
     for (let key of this.keys) {
       key.mouseMoved();
@@ -167,7 +130,6 @@ class Piano {
         this.noteOn(key.midiNote); // Simuler un événement MIDI noteOn
       }
     }
-    this.setChord();
   }
 
   mouseReleased() {
@@ -178,29 +140,10 @@ class Piano {
     }
   }
 
-  mouseDragged() {
-    // Ajoutez la logique de mouseDragged ici si nécessaire
-  }
 
-  mouseWheel(event) {
-    let direction;
-    if (event.delta > 0) {
-      direction = +1;
-    } else {
-      direction = -1;
-    }
-    // Ajoutez la logique de mouseWheel ici si nécessaire
-  }
 
-  toggleKeyCount(k) {
-    let keyCountindex, keyCount;
-    keyCountindex = keyCounts.indexOf(k);
-    keyCountindex++;
-    keyCountindex = keyCountindex % keyCounts.length;
-    keyCount = keyCounts[keyCountindex];
-    console.log(k + '>' + keyCount);
-    return keyCount;
-  }
+
+  // CLAVIER
 
   keyPressed(keyCode) {
     console.log(keyCode);
@@ -244,17 +187,6 @@ class Piano {
     }
   }
 
-  setChord() {
-    if (this.selectedNotes.length > 2) {
-      this.chordName = Tonal.Chord.detect(
-        this.selectedNotes
-          .toSorted()
-          .map((n) => Tonal.Midi.midiToNoteName(n, { pitchClass: true, sharps: false })),
-        { assumePerfectFifth: true }
-      )
-        .filter((e) => !e.includes('#5'))[0];
-    } else this.chordName = '';
-  }
 
   // utils
   whiteCount(keyCount) {
@@ -283,14 +215,9 @@ class Piano {
     return keyType;
   }
 
-  cleanChordLabel(chord) {
-    // Ajoutez la logique de nettoyage de l'étiquette d'accord ici si nécessaire
-  }
 
+  //  MIDI
 
-
-
-  // evenements midi
   noteOn(midiNote) {
     for (let key of this.keys) {
       if (key.midiNote === midiNote) {

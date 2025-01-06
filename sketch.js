@@ -13,10 +13,8 @@ function setup() {
 
     
   // clavier
-  pianos.push(new Piano(10, 50, 25 )) 
-  //pianos.push(new Piano(10, 250, 10, 61 )) 
-  //pianos.push(new Piano(10, 250, 10, 76 )) 
-  //pianos.push(new Piano(10, 350, 10, 88 ))
+  pianos.push(new Piano(10, 50, keyCounts[1] )) 
+
   for (const piano of pianos)
     initializeMidi(piano)
 }
@@ -25,12 +23,8 @@ function draw() {
   background('lime');
  
   // clavier
-  push()
-  
   for (const piano of pianos)
     piano.display()
-
-  pop()
   
 }
 
@@ -50,13 +44,11 @@ function mouseReleased(){
 }
 
 function mouseDragged(){
-  for (const piano of pianos)
-    piano.mouseDragged()
+
 }
 
 function mouseWheel(event) {  
-  for (const piano of pianos)
-    piano.mouseWheel(event)
+
 }
 
 function keyPressed(){
@@ -73,7 +65,6 @@ function windowResized() {
     piano.updateSize()
 }
 
-// Supprimer la fonction toggleKeyCount de sketch.js car elle est maintenant dans la classe Piano
 
 function notePressed(midiNote) {
   liveNotes.push(midiNote)
@@ -89,34 +80,3 @@ function noteReleased(midiNote) {
     piano.updateLiveNotes(liveNotes)   
 }
 
-function textKeyNote(note,x,y){ 
-  let size = textSize()
-  push()
-
-
-  if (!note) // return
-      console.log('oops')
-
-  if (note.includes('##')) note = note.replace('##', '𝄪')
-  if (note.includes('#')) note = note.replace('#', '♯')
-  if (note.includes('bb')) note = note.replace('bb', '𝄫')
-  if (note.includes('b')) note = note.replace('b', '♭')
-  
-
-  if (note.length > 2) {
-
-      text(note[0],x-0.3*size,y)
-      textSize(0.6*size)
-      text(note[1]+note[2],x+0.3*size,y-0.3*size)
-  } else
-  if (note.length == 2) {
-      text(note[0],x-0.1*size,y)
-      textSize(0.6*size)
-      text(note[1],x+0.3*size,y-0.2*size)
-  } else {
-      textSize(size)
-      text(note[0],x,y)
-  }
-  
-  pop()
-}

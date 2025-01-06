@@ -389,4 +389,34 @@ class Key {
 
     this.isPlayed =this.isLocked
   }
+}function textKeyNote(note,x,y){ 
+  let size = textSize()
+  push()
+
+
+  if (!note) // return
+      console.log('oops')
+
+  if (note.includes('##')) note = note.replace('##', '𝄪')
+  if (note.includes('#')) note = note.replace('#', '♯')
+  if (note.includes('bb')) note = note.replace('bb', '𝄫')
+  if (note.includes('b')) note = note.replace('b', '♭')
+  
+
+  if (note.length > 2) {
+
+      text(note[0],x-0.3*size,y)
+      textSize(0.6*size)
+      text(note[1]+note[2],x+0.3*size,y-0.3*size)
+  } else
+  if (note.length == 2) {
+      text(note[0],x-0.1*size,y)
+      textSize(0.6*size)
+      text(note[1],x+0.3*size,y-0.2*size)
+  } else {
+      textSize(size)
+      text(note[0],x,y)
+  }
+  
+  pop()
 }
